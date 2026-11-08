@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ILLIT交換</title>
+<style>
+:root{--bg:#f6f4fb;--surface:#fff;--ink:#1d1b2e;--sub:#6b6880;--line:#dcd8ea;--accent:#6a3df0;--accent-ink:#fff;--give:#d6336c;--want:#1f8a70;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#14121f;--surface:#1f1c30;--ink:#efecfa;--sub:#a29fb8;--line:#38344f;--accent:#9b82ff;--accent-ink:#14121f;--give:#ff7aa8;--want:#5fd3b3}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;line-height:1.6;-webkit-text-size-adjust:100%}
+main{max-width:560px;margin:0 auto;padding:20px 16px 96px}
+h1{font-size:22px;margin:4px 0 2px}.lead{color:var(--sub);font-size:13px;margin:0 0 14px}
+.me{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.me b{font-size:26px;margin-right:4px}.me small{color:var(--sub);font-size:12px}
+.badge{font-size:12px;border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:1px 8px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--sub);font:inherit;font-size:14px;font-weight:600}
+nav button[aria-selected="true"]{color:var(--accent)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}
+fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0 0;padding:0 12px 12px}
+legend{font-weight:700;font-size:14px;padding:0 6px}.give legend{color:var(--give)}.want legend{color:var(--want)}
+.primary{width:100%;margin-top:18px;padding:14px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:700;font-size:16px}
+.btn{border:1px solid var(--accent);background:none;color:var(--accent);border-radius:10px;padding:8px 14px;font:inherit;font-size:14px;font-weight:600}
+.btn.fill{background:var(--accent);color:var(--accent-ink)}
+.post{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.who{font-size:12px;color:var(--sub);display:flex;justify-content:space-between}
+.line{margin-top:8px;font-size:15px}
+.line i{font-style:normal;font-weight:700;font-size:12px;margin-right:6px;border-radius:6px;padding:1px 7px;color:#fff}
+.line .g{background:var(--give)}.line .w{background:var(--want)}
+.note{font-size:13px;color:var(--sub);margin-top:6px}
+.act{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--sub)}
+.empty{margin-top:24px;padding:20px;border:1px dashed var(--line);border-radius:14px;color:var(--sub);font-size:14px}
+.login{text-align:center;margin-top:48px}
+.foot{font-size:12px;color:var(--sub);margin-top:28px}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;display:none;z-index:20}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:8px 14px;font:inherit;font-size:14px}.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.warn{border:1px solid var(--give);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}.kind{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>ILLIT交換</h1>
+<p class="lead">手数料0円。交換した回数が、あなたの実績になります。</p>
+
+<div id="login" class="login" hidden>
+  <p>Googleアカウントで登録・ログインできます。</p>
+  <button class="primary" id="signin">Googleでログイン</button>
+  <p class="foot">ログインすると、利用規約とプライバシーポリシー（準備中）に同意したものとみなされます。取得するのは、名前とメールアドレスです。</p>
+</div>
+
+<div id="app" hidden>
+  <div class="me"><div><b id="cnt">0</b><small>件の交換実績</small></div><span><span class="badge" id="rank">はじめまして</span> <button class="btn" id="signout">ログアウト</button></span></div>
+  <section id="v-board"><div class="chips" id="flt" style="margin:0 0 10px"><button class="chip" data-f="all" aria-pressed="true">すべて</button><button class="chip" data-f="photocard" aria-pressed="false">フォトカ</button><button class="chip" data-f="serial" aria-pressed="false">シリアル</button></div><input id="q" type="search" placeholder="メンバー・アルバムで探す" aria-label="検索"><div id="list"></div></section>
+  <section id="v-post" hidden>
+    <div class="chips" id="kinds"><button class="chip" data-k="photocard" aria-pressed="true">フォトカ</button><button class="chip" data-k="serial" aria-pressed="false">シリアル</button></div>
+    <div id="serialwarn" class="warn" hidden>シリアルは、お金のやり取りをしない交換だけにしてください。コードは投稿に書かず、交換が決まってから相手に直接渡します。公式の規約で譲渡が禁止されているものは出さないでください。<label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink)"><input type="checkbox" id="agree" style="width:auto;margin-top:4px">上の内容を確認しました</label></div>
+    <fieldset class="give"><legend>譲る</legend><div class="chips" id="gm" role="group" aria-label="譲るメンバー"></div>
+      <label for="g2" id="g2l">アルバム・特典</label><input id="g2" placeholder="例：1st Album 店舗特典"></fieldset>
+    <fieldset class="want"><legend>求める</legend><div class="chips" id="wm" role="group" aria-label="求めるメンバー"></div>
+      <label for="w2" id="w2l">アルバム・特典（任意）</label><input id="w2" placeholder="例：どれでも可"></fieldset>
+    <label for="note">ひとこと（状態・受け渡し方法など）</label><textarea id="note" rows="2"></textarea>
+    <button class="primary" id="post">募集を投稿する</button>
+  </section>
+  <section id="v-mine" hidden><div id="mine"></div></section>
+</div>
+</main>
+<div class="toast" id="toast"></div>
+<nav id="nav" hidden>
+  <button data-v="board" aria-selected="true">みつける</button>
+  <button data-v="post" aria-selected="false">投稿する</button>
+  <button data-v="mine" aria-selected="false">自分の取引</button>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyAYJKe27qdZ4KocXimDPt6KV5mOZzaFD_Q",
+  authDomain: "trading-card-assessment.firebaseapp.com",
+  projectId: "trading-card-assessment",
+  storageBucket: "trading-card-assessment.firebasestorage.app",
+  messagingSenderId: "472614549744",
+  appId: "1:472614549744:web:3b653f9ff295f7d7226a35",
+  measurementId: "G-7XMTSTTXXF"
+};
+firebase.initializeApp(firebaseConfig);
+var flt="all",kind="photocard",gm="",wm="";
+var auth=firebase.auth(),fs=firebase.firestore(),me=null,docs=[],unsub=null;
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";setTimeout(function(){e.style.display="none";},2000);}
+function show(v){["board","post","mine"].forEach(function(x){$("v-"+x).hidden=x!==v;});
+  document.querySelectorAll("nav button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v?"true":"false");});window.scrollTo(0,0);}
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){show(b.dataset.v);};});
+function rankOf(n){return n>=20?"ベテラン":n>=5?"なれてきた":n>=1?"はじめの一歩":"はじめまして";}
+
+$("signin").onclick=function(){
+  var p=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(p).catch(function(e){if(e.code!=="auth/popup-closed-by-user")auth.signInWithRedirect(p);});
+};
+$("signout").onclick=function(){auth.signOut();};
+
+function post(d){
+  var mine=d.owner===me.uid,h='<div class="post"><div class="who"><span>'+(d.kind==="serial"?'<span class="kind">シリアル</span>':"")+esc(d.ownerName)+'・実績'+d.ownerCount+'件</span><span>'+esc(d.when)+'</span></div>';
+  h+='<div class="line"><i class="g">譲</i>'+esc(d.give)+'</div><div class="line"><i class="w">求</i>'+esc(d.want)+'</div>';
+  if(d.note)h+='<div class="note">'+esc(d.note)+'</div>';
+  if(d.kind==="serial")h+='<div class="note">コードは交換が決まってから直接渡します。先に渡さないでください。</div>';
+  h+='<div class="act">';
+  if(d.status==="open")h+=mine?'<span>募集中</span><button class="btn" data-a="del" data-id="'+d.id+'">取り下げる</button>':'<button class="btn fill" data-a="apply" data-id="'+d.id+'">交換を申し込む</button>';
+  else if(d.status==="pending"){
+    if(mine)h+='<span>'+esc(d.partnerName)+'さんから申し込み</span><button class="btn fill" data-a="done" data-id="'+d.id+'">交換できた</button><button class="btn" data-a="reopen" data-id="'+d.id+'">断る</button>';
+    else if(d.partner===me.uid)h+='<span>申し込み済み。相手の返事を待っています</span>';
+    else h+='<span>交渉中</span>';
+  }else h+='<span>交換済み</span>';
+  return h+'</div></div>';
+}
+function render(){
+  var counts={};docs.forEach(function(d){if(d.status==="done"){counts[d.owner]=(counts[d.owner]||0)+1;if(d.partner)counts[d.partner]=(counts[d.partner]||0)+1;}});
+  var c=counts[me.uid]||0;$("cnt").textContent=c;$("rank").textContent=rankOf(c);
+  docs.forEach(function(d){d.ownerCount=counts[d.owner]||0;});
+  var q=$("q").value.trim().toLowerCase();
+  var open=docs.filter(function(d){return d.status!=="done"&&(flt==="all"||(d.kind||"photocard")===flt)&&(!q||(d.give+" "+d.want).toLowerCase().indexOf(q)>=0);});
+  $("list").innerHTML=open.length?open.map(post).join(""):'<div class="empty">まだ募集がありません。「投稿する」から、譲りたいカードと欲しいカードを書いてみましょう。</div>';
+  var m=docs.filter(function(d){return d.owner===me.uid||d.partner===me.uid;});
+  $("mine").innerHTML=m.length?m.map(post).join(""):'<div class="empty">まだ取引がありません。</div>';
+}
+function act(e){
+  var b=e.target.closest("button[data-a]");if(!b)return;
+  var ref=fs.collection("listings").doc(b.dataset.id),a=b.dataset.a,p;
+  if(a==="apply")p=ref.update({status:"pending",partner:me.uid,partnerName:me.displayName||"メンバー"});
+  else if(a==="done")p=ref.update({status:"done"});
+  else if(a==="reopen")p=ref.update({status:"open",partner:null,partnerName:null});
+  else if(a==="del"){if(!confirm("この募集を取り下げますか？"))return;p=ref.delete();}
+  p.then(function(){toast("更新しました");}).catch(function(){toast("失敗しました。もう一度お試しください");});
+}
+$("list").onclick=act;$("mine").onclick=act;$("q").oninput=function(){if(me)render();};
+$("post").onclick=function(){
+  var g2=$("g2").value.trim(),w2=$("w2").value.trim(),nt=$("note").value.trim(),d=new Date();
+  if(!gm||!wm){toast("譲る・求めるメンバーを選んでください");return;}
+  if(kind==="serial"){
+    if(!$("agree").checked){toast("注意事項を確認してチェックしてください");return;}
+    if(/(?=[A-Za-z0-9-]*\d)(?=[A-Za-z0-9-]*[A-Za-z])[A-Za-z0-9-]{8,}/.test(g2+" "+w2+" "+nt)){toast("コードらしき文字列は書かないでください");return;}
+  }
+  fs.collection("listings").add({kind:kind,owner:me.uid,ownerName:me.displayName||"メンバー",give:gm+(g2?"（"+g2+"）":""),want:wm+(w2?"（"+w2+"）":""),note:nt,status:"open",partner:null,partnerName:null,when:(d.getMonth()+1)+"/"+d.getDate(),createdAt:Date.now()})
+   .then(function(){["g2","w2","note"].forEach(function(i){$(i).value="";});$("agree").checked=false;gm="";wm="";document.querySelectorAll("#gm .chip,#wm .chip").forEach(function(x){x.setAttribute("aria-pressed","false");});toast("投稿しました");show("board");})
+   .catch(function(){toast("投稿できませんでした");});
+};
+var MEMBERS=["ユナ","ミンジュ","モカ","ウォンヒ","イロハ","指定なし"];
+["gm","wm"].forEach(function(id){
+  $(id).innerHTML=MEMBERS.map(function(m){return '<button type="button" class="chip" aria-pressed="false">'+m+'</button>';}).join("");
+  $(id).onclick=function(e){var b=e.target.closest(".chip");if(!b)return;this.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed","false");});b.setAttribute("aria-pressed","true");if(id==="gm")gm=b.textContent;else wm=b.textContent;};
+});
+$("kinds").onclick=function(e){var b=e.target.closest(".chip");if(!b)return;kind=b.dataset.k;this.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});var sr=kind==="serial";$("serialwarn").hidden=!sr;$("g2l").textContent=sr?"シリアルの種類（コードは書かない）":"アルバム・特典";$("w2l").textContent=sr?"求めるもの（任意）":"アルバム・特典（任意）";$("g2").placeholder=sr?"例：サイン会応募用":"例：1st Album 店舗特典";};
+$("flt").onclick=function(e){var b=e.target.closest(".chip");if(!b)return;flt=b.dataset.f;this.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});if(me)render();};
+auth.onAuthStateChanged(function(u){
+  me=u;if(unsub){unsub();unsub=null;}
+  $("login").hidden=!!u;$("app").hidden=!u;$("nav").hidden=!u;
+  if(u){unsub=fs.collection("listings").orderBy("createdAt","desc").limit(200).onSnapshot(function(s){
+    docs=s.docs.map(function(x){var d=x.data();d.id=x.id;return d;});render();
+  },function(){toast("読み込みに失敗しました");});}
+});
+</script>
+</body>
+</html>
